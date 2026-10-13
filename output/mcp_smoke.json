@@ -1,0 +1,159 @@
+{
+  "title": "Campus Customs MCP smoke test",
+  "problem": "Problem 4 — Add the MCP server to the vibe coder and test each tool",
+  "run_date": "2026-10-12",
+  "vibe_coder": "Claude Code (desktop app, Code tab)",
+  "connection": {
+    "config_file": ".mcp.json",
+    "server_name": "campus-customs-ops",
+    "transport": "stdio",
+    "command": "/Users/kellyenright/Desktop/AI Foundations Class Fall 2026/HW 5/.venv/bin/python",
+    "args": ["/Users/kellyenright/Desktop/AI Foundations Class Fall 2026/HW 5/mcp_server/server.py"],
+    "server_version": "FastMCP 4.1.0",
+    "tools_exposed": ["check_stock", "get_rent_obligation", "check_discount_margin"],
+    "note": "Server was picked up after a full restart of the Claude desktop app. Tools appear to the vibe coder namespaced as mcp__campus-customs-ops__<tool>."
+  },
+  "database": {
+    "path": "data/campus_customs_new.db",
+    "access": "read-only (sqlite3 URI mode=ro)",
+    "shop_today": "2026-08-31",
+    "unchanged_after_run": true,
+    "unchanged_check": "cmp data/campus_customs.db data/campus_customs_new.db -> identical; the three read-only tools wrote nothing"
+  },
+  "tests": [
+    {
+      "test": 1,
+      "ticket": 101,
+      "prompt": "Ticket 101 wants one Classic Bulldog Tee in size S. Do we have it in stock?",
+      "tool": "mcp__campus-customs-ops__check_stock",
+      "arguments": { "sku": "CC-TEE-WHITE", "size": "S", "qty_needed": 1 },
+      "output": {
+        "found": true,
+        "sku": "CC-TEE-WHITE",
+        "name": "Classic Bulldog Tee",
+        "sizes": [
+          { "size": "L", "qty": 3, "location": "Aisle B" },
+          { "size": "M", "qty": 5, "location": "Aisle B" },
+          { "size": "S", "qty": 0, "location": "Aisle B" },
+          { "size": "XL", "qty": 2, "location": "Aisle B" }
+        ],
+        "total_on_hand_all_sizes": 10,
+        "requested_size": "S",
+        "qty_on_hand": 0,
+        "location": "Aisle B",
+        "in_stock": false,
+        "qty_needed": 1,
+        "shortfall": 1,
+        "can_fulfill_from_stock": false
+      },
+      "db_verification": {
+        "sql": "SELECT sku, size, qty, location FROM inventory WHERE sku='CC-TEE-WHITE' ORDER BY size;",
+        "rows": [
+          { "sku": "CC-TEE-WHITE", "size": "L", "qty": 3, "location": "Aisle B" },
+          { "sku": "CC-TEE-WHITE", "size": "M", "qty": 5, "location": "Aisle B" },
+          { "sku": "CC-TEE-WHITE", "size": "S", "qty": 0, "location": "Aisle B" },
+          { "sku": "CC-TEE-WHITE", "size": "XL", "qty": 2, "location": "Aisle B" }
+        ],
+        "matches": true
+      },
+      "answer": "No. Size S is at 0 units in Aisle B, so ticket 101 cannot be filled from stock — shortfall of 1.",
+      "why_this_test_proves_the_tool_works": "The SKU holds 10 units across L/M/XL, so a tool that ignored size would have reported the order as fillable. Returning qty_on_hand 0 for size S is the discriminating result."
+    },
+    {
+      "test": 2,
+      "ticket": 102,
+      "prompt": "Ticket 102 is a rent notice on lease 1. How much is due, when, and can we cover it?",
+      "tool": "mcp__campus-customs-ops__get_rent_obligation",
+      "arguments": { "lease_id": 1 },
+      "output": {
+        "found": true,
+        "lease_id": 1,
+        "space_name": "Chapel Street shop",
+        "landlord": "Elm City Properties",
+        "monthly_rent": 2400,
+        "next_due": "2026-09-02",
+        "shop_today": "2026-08-31",
+        "days_until_due": 2,
+        "is_overdue": false,
+        "notes": null,
+        "cash_accounts": [{ "name": "checking", "balance": 3400, "date": "2026-08-31" }],
+        "total_cash": 3400,
+        "cash_covers_rent": true,
+        "cash_after_paying_rent": 1000
+      },
+      "db_verification": {
+        "sql": "SELECT l.monthly_rent, l.next_due, d.date_today AS shop_today, CAST(julianday(l.next_due)-julianday(d.date_today) AS INT) AS days_until_due, c.balance, c.balance-l.monthly_rent AS after_rent FROM leases l, desk d, cash_accounts c WHERE l.id=1;",
+        "rows": [
+          {
+            "monthly_rent": 2400.0,
+            "next_due": "2026-09-02",
+            "shop_today": "2026-08-31",
+            "days_until_due": 2,
+            "balance": 3400.0,
+            "after_rent": 1000.0
+          }
+        ],
+        "matches": true
+      },
+      "answer": "$2,400 to Elm City Properties for the Chapel Street shop, due 2026-09-02 — 2 days out, not yet late. Checking holds $3,400, so it is covered, leaving $1,000.",
+      "why_this_test_proves_the_tool_works": "The only tool reading three tables (leases + desk + cash_accounts), and the only one exercising the shop-clock rule. The real date at run time was 2026-10-12; had the tool used the system clock it would have reported rent ~40 days overdue instead of 2 days out. days_until_due 2 confirms it read desk.date_today."
+    },
+    {
+      "test": 3,
+      "ticket": 103,
+      "prompt": "Ticket 103 wants 20 navy hoodies in M at 20% off list. What's the margin and is it above cost?",
+      "tool": "mcp__campus-customs-ops__check_discount_margin",
+      "arguments": { "sku": "CC-HOOD-NAVY", "qty": 20, "proposed_unit_price": 46.4 },
+      "output": {
+        "found": true,
+        "sku": "CC-HOOD-NAVY",
+        "qty": 20,
+        "unit_cost": 22,
+        "list_price": 58,
+        "break_even_unit_price": 22,
+        "at_list": {
+          "unit_price": 58,
+          "revenue": 1160,
+          "cost_of_goods": 440,
+          "gross_profit": 720,
+          "margin_pct": 62.1
+        },
+        "proposed": {
+          "unit_price": 46.4,
+          "discount_off_list_pct": 20,
+          "revenue": 928,
+          "cost_of_goods": 440,
+          "gross_profit": 488,
+          "margin_pct": 52.6,
+          "above_cost": true,
+          "gross_profit_given_up_vs_list": 232
+        }
+      },
+      "db_verification": {
+        "sql": "SELECT unit_cost, list_price, ROUND(20*58.0,2) AS rev_list, ROUND(20*unit_cost,2) AS cogs, ROUND(20*(58.0-unit_cost),2) AS gp_list, ROUND(100.0*(list_price-unit_cost)/list_price,1) AS margin_list, ROUND(20*46.40,2) AS rev_prop, ROUND(20*(46.40-unit_cost),2) AS gp_prop, ROUND(100.0*(46.40-unit_cost)/46.40,1) AS margin_prop FROM pricing WHERE sku='CC-HOOD-NAVY';",
+        "rows": [
+          {
+            "unit_cost": 22.0,
+            "list_price": 58.0,
+            "rev_list": 1160.0,
+            "cogs": 440.0,
+            "gp_list": 720.0,
+            "margin_list": 62.1,
+            "rev_prop": 928.0,
+            "gp_prop": 488.0,
+            "margin_prop": 52.6
+          }
+        ],
+        "matches": true
+      },
+      "answer": "At $46.40/unit (20% off the $58 list) the margin is 52.6% — $928 revenue on $440 cost, $488 gross profit. Comfortably above the $22 break-even, giving up $232 versus list.",
+      "why_this_test_proves_the_tool_works": "Exercises the surface the other two do not: values computed over the ticket quantity rather than read from a row, plus the optional proposed_unit_price parameter. All nine derived figures reconcile to arithmetic over pricing.unit_cost and pricing.list_price."
+    }
+  ],
+  "result": {
+    "tools_tested": 3,
+    "tools_passed": 3,
+    "all_outputs_match_database": true,
+    "summary": "All three MCP tools were called by the vibe coder over stdio and every returned value reconciles to data/campus_customs_new.db by independent SQL. No value was invented and the database was not modified."
+  }
+}

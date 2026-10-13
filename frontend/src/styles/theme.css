@@ -1,0 +1,205 @@
+/* ===========================================================================
+   Campus Customs — Operations Desk
+
+   HW 4 dressed the storefront as a 1936 game-day program. This is the back
+   office of that same shop: the dispatcher's desk where tickets land in a wire
+   tray, staff work them in their own hands, and the cash drawer sits under the
+   counter. Same ink, same paper, same brass — but a working room rather than a
+   printed program, so the surfaces are desk blotter and card stock instead of
+   newsprint, and the motion is mechanical rather than editorial.
+   =========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Oswald:wght@300;400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+:root {
+  /* --- ink & paper (carried from HW 4) --------------------------------- */
+  --paper: #f6efdf;
+  --paper-deep: #efe4cd;
+  --paper-edge: #e2d4b7;
+  --ink: #16283d;
+  --ink-soft: #52616f;
+  --navy: #16283d;
+  --navy-light: #24405f;
+  --crimson: #96301f;
+  --crimson-light: #b8432e;
+  --gold: #c8912f;
+  --gold-light: #e0ae4d;
+  --cream: #fffaf0;
+  --line: #d9c9a8;
+
+  /* --- back-office additions ------------------------------------------- */
+  --blotter: #23384a;          /* the desk surface itself */
+  --blotter-deep: #1a2b3a;
+  --felt: #2f4a3d;             /* green desk felt, for the cash drawer */
+  --ledger: #1d6b4f;           /* ledger green */
+  --ledger-light: #2f9a73;
+  --stamp-red: #9e2b1c;
+  --stamp-blue: #27486b;
+  --carbon: #6b6257;           /* carbon-copy grey for drafts */
+
+  /* --- the five hands --------------------------------------------------- */
+  --boss: #16283d;
+  --inventory: #7a5a1e;
+  --accounting: #1d6b4f;
+  --facilities: #6b3a86;
+  --customer: #96301f;
+
+  --radius: 4px;
+  --radius-lg: 6px;
+  --shadow-sm: 0 1px 0 rgba(22, 40, 61, 0.14);
+  --shadow-md: 0 6px 18px rgba(22, 40, 61, 0.16);
+  --shadow-lg: 0 20px 48px rgba(13, 27, 43, 0.3);
+  --shadow-card: 0 1px 2px rgba(22,40,61,.1), 0 8px 20px rgba(22,40,61,.1);
+
+  --font-display: "Alfa Slab One", Georgia, serif;
+  --font-condensed: "Oswald", "Helvetica Neue", sans-serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-type: "Special Elite", "Courier New", monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+/* The desk: dark blotter with a faint leather grain, paper laid on top. */
+body {
+  margin: 0;
+  background-color: var(--blotter);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(200,145,47,.10) 0 42%, transparent 42%),
+    radial-gradient(ellipse at 88% 10%, rgba(150,48,31,.08) 0 38%, transparent 38%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.09'/%3E%3C/svg%3E");
+  font-family: var(--font-body);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; margin: 0; letter-spacing: -.01em; }
+
+/* --- paper surfaces ------------------------------------------------------ */
+
+.sheet {
+  background: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23f)' opacity='0.045'/%3E%3C/svg%3E");
+  border: 1px solid var(--paper-edge);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+/* A double rule, straight off a program page. */
+.rule {
+  border: 0;
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  height: 3px;
+  margin: 0 0 14px;
+  opacity: .85;
+}
+
+.label {
+  font-family: var(--font-condensed);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.num { font-variant-numeric: tabular-nums; font-family: var(--font-condensed); }
+
+/* --- rubber stamps -------------------------------------------------------
+   Status reads as something pressed onto the paper, not a pill from a UI kit.
+   Slight rotation and a ragged edge via double border + opacity.             */
+
+.stamp {
+  display: inline-block;
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  padding: 4px 11px 3px;
+  border: 2.5px solid currentColor;
+  border-radius: 3px;
+  transform: rotate(-3.2deg);
+  opacity: .88;
+  position: relative;
+}
+.stamp::after {
+  content: "";
+  position: absolute; inset: -3px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  opacity: .35;
+}
+.stamp.open     { color: var(--stamp-blue); }
+.stamp.resolved { color: var(--ledger); transform: rotate(-5deg); }
+.stamp.pending  { color: var(--gold); }
+.stamp.refused  { color: var(--stamp-red); }
+.stamp.approved { color: var(--ledger); }
+
+/* --- buttons ------------------------------------------------------------- */
+
+.btn {
+  font-family: var(--font-condensed);
+  font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+  padding: 10px 18px;
+  border: 2px solid var(--ink);
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform .09s ease, box-shadow .09s ease, background .15s ease;
+}
+.btn:hover:not(:disabled) { background: var(--paper-deep); }
+.btn:active:not(:disabled) { transform: translate(2px,2px); box-shadow: 0 0 0 var(--ink); }
+.btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: 1px 1px 0 var(--ink-soft); }
+.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.btn.primary { background: var(--crimson); color: var(--cream); border-color: var(--crimson); box-shadow: 2px 2px 0 var(--navy); }
+.btn.primary:hover:not(:disabled) { background: var(--crimson-light); }
+.btn.go { background: var(--ledger); color: var(--cream); border-color: var(--ledger); box-shadow: 2px 2px 0 var(--navy); }
+.btn.go:hover:not(:disabled) { background: var(--ledger-light); }
+.btn.small { font-size: 11px; padding: 7px 12px; }
+
+/* --- motion --------------------------------------------------------------
+   Mechanical, not editorial: things stamp, tick, and slide like paper and
+   drawers rather than floating in.                                          */
+
+@keyframes stamp-in {
+  0%   { transform: scale(2.6) rotate(-14deg); opacity: 0; }
+  55%  { transform: scale(.94) rotate(-3deg);  opacity: 1; }
+  75%  { transform: scale(1.04) rotate(-4.4deg); }
+  100% { transform: scale(1) rotate(-3.2deg); }
+}
+.stamp-in { animation: stamp-in .42s cubic-bezier(.2,1.4,.5,1) both; }
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.slide-in { animation: slide-in .3s ease both; }
+
+@keyframes drop-in {
+  from { opacity: 0; transform: translateY(-16px) rotate(-1.4deg); }
+  to   { opacity: 1; transform: translateY(0) rotate(0); }
+}
+.drop-in { animation: drop-in .36s cubic-bezier(.2,.9,.3,1) both; }
+
+@keyframes blink { 0%,45% { opacity: 1 } 50%,95% { opacity: .15 } 100% { opacity: 1 } }
+.live-dot { animation: blink 1.25s steps(1,end) infinite; }
+
+@keyframes tick { 0% { transform: translateY(-100%); } 100% { transform: translateY(0); } }
+
+@keyframes nib {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  25%     { transform: translateY(-1.5px) rotate(-3deg); }
+  75%     { transform: translateY(1.5px) rotate(3deg); }
+}
+.writing { animation: nib .62s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

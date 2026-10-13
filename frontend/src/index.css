@@ -1,0 +1,17 @@
+@import "./styles/theme.css";
+
+#root { min-height: 100vh; }
+a { color: var(--crimson); }
+::selection { background: var(--gold-light); color: var(--ink); }
+
+/* Scrollbars dressed as desk hardware rather than browser chrome. */
+*::-webkit-scrollbar { width: 11px; height: 11px; }
+*::-webkit-scrollbar-track { background: rgba(22,40,61,.08); }
+*::-webkit-scrollbar-thumb { background: var(--paper-edge); border-radius: 6px; border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--gold); background-clip: content-box; }
+
+/* The desk collapses to a single column on narrow screens — the order still
+   reads work-arrives / work-happens / work-needs-you top to bottom. */
+@media (max-width: 1150px) {
+  .desk-grid { grid-template-columns: minmax(0,1fr) !important; }
+}

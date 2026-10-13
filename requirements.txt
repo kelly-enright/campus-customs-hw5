@@ -1,0 +1,14 @@
+# Campus Customs — all Python dependencies for the MCP server and the backend.
+# Install into one venv at the project root:  ./.venv/bin/pip install -r requirements.txt
+
+# MCP server (mcp_server/server.py)
+fastmcp>=2.0.0
+
+# FastAPI backend (backend/main.py)
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+
+# Agent team (backend/agents/)
+pydantic-ai-slim[openai,mcp]>=1.0.0
+openai>=1.40.0
+python-dotenv>=1.0.1

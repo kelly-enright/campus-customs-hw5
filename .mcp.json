@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "campus-customs-ops": {
+      "command": "/Users/kellyenright/Desktop/AI Foundations Class Fall 2026/HW 5/.venv/bin/python",
+      "args": [
+        "/Users/kellyenright/Desktop/AI Foundations Class Fall 2026/HW 5/mcp_server/server.py"
+      ]
+    }
+  }
+}

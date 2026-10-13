@@ -1,0 +1,19 @@
+# Secrets — never commit the real key
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+.vite/
+tsconfig.tsbuildinfo
+
+# OS
+.DS_Store
+
+# NOTE: data/*.db is deliberately NOT ignored. Both the original and the
+# working copy are committed so graders can clone and run immediately.

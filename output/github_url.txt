@@ -1,0 +1,17 @@
+https://github.com/kelly-enright/campus-customs-hw5
+
+Campus Customs — Multi-Agent Operations (HW 5)
+Public repository. Clone and run:
+
+  git clone https://github.com/kelly-enright/campus-customs-hw5
+  cd campus-customs-hw5
+  python3 -m venv .venv
+  ./.venv/bin/pip install -r requirements.txt
+  cd frontend && npm install && cd ..
+
+Then copy .env.example to .env and add PORTKEY_API_KEY.
+Full instructions, including how to reset the database before a
+three-ticket run, are in README.md.
+
+Both databases are included under data/ — campus_customs.db is the
+original, campus_customs_new.db is the working copy the tools write to.
