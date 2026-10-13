@@ -397,3 +397,36 @@ on another machine); and there was no `.env.example`, so nothing documented that
 
 ---
 
+## Problem 11 — Submit to GitHub
+
+### Prompt 1
+
+> Problem 11: "Submit to Github". Push the code to a public Github repository so graders can clone it. I am then going to submit it to Canvas. It should also be put in output/github_url.txt. I do not want to push my real .env to the Github repo. Do include both database files under data/ (the original and the working copy) so graders can run the app easily. The expected file layout is in the screenshot. README should explain: copy original DB to the working copy when you need a clean run, start MCP server, start FastAPI backend, start the React board, reset the DB before a full three-ticket run.
+
+**Outcome:** Pushed to **https://github.com/kelly-enright/campus-customs-hw5** (public),
+matching the existing `campus-customs-hw4` naming convention. 57 files in one commit.
+
+Restructured to match the layout in the screenshot: renamed `mcp_server/mcp_server.py` to
+`mcp_server/server.py` and updated every reference to it, and consolidated
+`backend/requirements.txt` and `mcp_server/requirements.txt` into a single root
+`requirements.txt`.
+
+Rewrote the README's run section as six numbered steps covering everything asked for:
+install, set the key, **copy the original database over the working copy for a clean run**,
+start the MCP server (noting the backend launches it over stdio, so it is only needed
+standalone), start the FastAPI backend, start the React board — plus a separate section on
+**resetting before a full three-ticket run** and what a correct run should produce.
+
+Secret safety was checked three times rather than assumed: the live key was grepped against
+every file in the folder, then against every staged file's contents individually, and the
+audit trail's field names were checked for anything credential-shaped. All clean. `.env` is
+gitignored and absent; `.env.example` documents the two variables.
+
+Verified by cloning the public repo fresh into a scratch directory: 57 files, no `.env`,
+both databases present and opening correctly — `campus_customs.db` with 9 tables, $3,400 and
+three open tickets, and `campus_customs_new.db` with 10 tables, $1,000 and three resolved —
+so a grader can inspect the finished state and reset to a clean board from the same clone.
+`output/github_url.txt` holds the URL and clone instructions.
+
+---
+
